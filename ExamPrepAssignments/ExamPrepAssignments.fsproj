@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Assignment 1\Assignment_1.fs" />
+    <Compile Include="Assignment 2\Assignment_2.fs" />
+    <Compile Include="Assignment 3\ArithExp.fs" />
+    <Compile Include="Assignment 3\State.fs" />
+    <Compile Include="Assignment 3\ImperativeLanguage.fs" />
+    <Compile Include="Assignment 3\WordLookup.fs" />
+    <Compile Include="Assignment 3\EvalStatements.fs" />
+    <Compile Include="Assignment 3\SquaresAsPrograms.fs" />
+    <Compile Include="Assignment 4\Misc_4.fs" />
+    <Compile Include="Assignment 4\CollectionOfStrings.fs" />
+    <Compile Include="Assignment 4\Trie.fs" />
+    <Compile Include="Assignment 4\Gaddag.fs" />
+    <Compile Include="Assignment 5\Assignment_5.fs" />
+    <Compile Include="Assignment 6\Eval.fs" />
+    <Compile Include="Assignment 6\Program.fs" />
+    <Compile Include="Assignment 6\StateMonad.fs" />
+    <Compile Include="Assignment 6\StateMonad.fsi" />
+    <Compile Include="Assignment 7\Eval.fs" />
+    <Compile Include="Assignment 7\FParsecLight.fs" />
+    <Compile Include="Assignment 7\FParsecLight.fsi" />
+    <Compile Include="Assignment 7\JParsec.fs" />
+    <Compile Include="Assignment 7\JParsec.fsi" />
+    <Compile Include="Assignment 7\Parser.fs" />
+    <Compile Include="Assignment 7\Program.fs" />
+    <Compile Include="Assignment 7\StateMonad.fs" />
+    <Compile Include="Assignment 7\StateMonad.fsi" />
+  </ItemGroup>
+
+</Project>
