@@ -74,16 +74,27 @@
     let test(c,e) = if c then e else 0
 
     // 1. What is the type of test?                                                 --> bool * int -> int
-    // 2. What is the result of evaluating test(false, fact(−1)) ?                  --> StackOcerflowException
-    // 3. Compare this with the result of evaluating if false then fact -1 else 0   --> It evaluates before checking the bool in the if-statement
+    // 2. What is the result of evaluating test(false, fact(−1)) ?                  --> StackOverflowException
+    // 3. Compare this with the result of evaluating if false then fact -1 else 0   --> The if clause evaluates fact -1 if the statement is true otherwise it returns 0, and skips fact -1
 
     // Exercise 11
-
+    let curry f x y = f(x,y)
+    let uncurry f (x,y) = f x y
 
     // Exercise 12
+    let empty (letter, pointValue) = fun (pos : int) -> (letter, pointValue)
+    
+    let theLetterA : int -> char * int = empty ('A', 1)
 
     // Exercise 13
+    let add newPos (letter, pointValue) word = fun (pos : int) -> if pos = newPos then (letter, pointValue) else word pos
 
     // Exercise 14
-
+    let hello = empty (char 0, 0) |> add 0 ('H', 4) |> add 1 ('E', 1) |> add 2 ('L', 1) |> add 3 ('L', 1) |> add 4 ('O', 1)
+    
     // Exercise 15
+    let singleLetterScore word pos = snd(word pos)
+    
+    let doubleLetterScore word pos = singleLetterScore word pos * 2
+    
+    let trippleLetterScore word pos = singleLetterScore word pos * 3

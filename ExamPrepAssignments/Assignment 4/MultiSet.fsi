@@ -1,6 +1,4 @@
-﻿// Insert your MultiSet.fsi file here. All modules must be internal
-
-module internal MultiSet
+﻿module MultiSetAssignments
     type MultiSet<'a> when 'a : comparison
 
     val empty : MultiSet<'a>

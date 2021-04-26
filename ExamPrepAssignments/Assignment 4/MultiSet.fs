@@ -1,6 +1,5 @@
-﻿// Insert your MultiSet.fs file here. All modules must be internal
-
-module internal MultiSet
+﻿module internal MultiSetAssignment
+    // Exercise 1
     type 'a MultiSet when 'a : comparison =
         | MS of Map<'a, uint32>
         override this.ToString() = 
@@ -54,3 +53,5 @@ module internal MultiSet
     let subtract ms1 (MS ms2) = Map.fold (fun acc k v -> remove k v acc) ms1 ms2
 
     let intersection ms1 (MS ms2) = Map.fold (fun acc k v -> if contains k acc then acc else remove k v acc) ms1 ms2
+
+   

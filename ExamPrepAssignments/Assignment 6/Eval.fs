@@ -1,15 +1,27 @@
-﻿module Eval
+﻿namespace Assignment_6
 
-    open StateMonad
+module Eval =
+    open StateMonadAssignment
+    open System
 
     (* Code for testing *)
 
     let hello = [(* INSERT YOUR DEFINITON OF HELLO HERE.*)] 
     let state = mkState [("x", 5); ("y", 42)] hello ["_pos_"; "_result_"]
     let emptyState = mkState [] [] []
+
+    let binop f a b = a >>= fun x -> b >>= fun y -> ret(f x y)
+    let add a b = binop (+) a b
     
-    let add a b = failwith "Not implemented"      
-    let div a b = failwith "Not implemented"      
+    let divisor f a b =
+        a >>= fun x ->
+        b >>= fun y ->
+        if y <> 0 then ret (f x y) else fail DivisionByZero
+    let div a b = divisor (/) a b   
+    
+    let switch f x = ret (f x)
+
+    let unop f a = a >>= switch f
 
     type aExp =
         | N of int
@@ -61,11 +73,38 @@
     let (.>=.) a b = ~~(a .<. b)                (* numeric greater than or equal to *)
     let (.>.) a b = ~~(a .=. b) .&&. (a .>=. b) (* numeric greater than *)    
 
-    let arithEval a : SM<int> = failwith "Not implemented"      
+    let rec arithEval a : SM<int> =
+        match a with
+        | N n -> ret n
+        | V x -> lookup x
+        | PV x -> (arithEval x >>= fun a -> pointValue a)
+        | WL -> wordLength
+        | Add (a1, a2) -> binop (+) (arithEval a1) (arithEval a2)
+        | Sub (a1, a2) -> binop (-) (arithEval a1) (arithEval a2)
+        | Mul (a1, a2) -> binop (*) (arithEval a1) (arithEval a2)
+        | Div (a1, a2) -> div (arithEval a1) (arithEval a2)
+        | Mod (a1, a2) -> divisor (%) (arithEval a1) (arithEval a2)
+        | CharToInt c  -> (charEval c >>= fun a -> ret (int a))
+    
+    and charEval c : SM<char> = 
+        match c with
+        | C x -> ret x
+        | CV x -> (arithEval x >>= fun a -> characterValue a)
+        | ToLower x -> (charEval x >>= fun a -> ret (Char.ToLower(a)))
+        | ToUpper x -> (charEval x >>= fun a -> ret (Char.ToUpper(a)))
+        | IntToChar x -> (arithEval x >>= fun a -> ret (char a))
 
-    let charEval c : SM<char> = failwith "Not implemented"      
-
-    let boolEval b : SM<bool> = failwith "Not implemented"
+    let boolEval b : SM<bool> = 
+        let rec aux = function
+        | TT -> ret true
+        | FF -> ret false
+        | AEq (x,y) -> (binop (=) (arithEval x) (arithEval y))
+        | ALt (x,y) -> (binop (<) (arithEval x) (arithEval y))
+        | Not bx -> (unop (not) (aux bx))
+        | Conj (bx, by) -> binop (&&) (aux bx) (aux by)
+        | IsLetter cx -> (charEval cx >>= fun a -> ret (Char.IsLetter(a)))
+        | IsDigit cx -> (charEval cx >>= fun a -> ret (Char.IsDigit(a)))
+        aux b
 
 
     type stm =                (* statements *)
@@ -76,7 +115,14 @@
     | ITE of bExp * stm * stm (* if-then-else statement *)
     | While of bExp * stm     (* while statement *)
 
-    let rec stmntEval stmnt : SM<unit> = failwith "Not implemented"
+    let rec stmntEval stmnt : SM<unit> = 
+        match stmnt with
+        | Declare s -> declare s
+        | Ass (s, a) -> failwith "Not implemented" // (arithEval a >>= fun x -> push x) s
+        | Skip -> ret ()
+        | Seq (stm1, stm2) -> failwith "Not implemented" // (stmntEval stm1) >>= fun _ -> (stmntEval stm2) s    
+        | ITE (bExp1, stm1, stm2) -> (boolEval bExp1 >>= fun t -> if t then stmntEval stm1 else stmntEval stm2)
+        | While (bExp1, stm1) -> failwith "Not implemented" // stmntEval (ITE(bExp1, Seq(stm1, While(bExp1, stm1)), Skip)) s
 
 (* Part 3 (Optional) *)
 

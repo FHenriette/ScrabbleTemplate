@@ -66,23 +66,76 @@
         | _ -> s.Chars(0) :: explode2(s.Remove(0,1))
 
     // Exercise 6
-    let implode (cs : char list) = List.foldBack(fun c acc -> acc + c) cs ""
+    let implode (cs : char list) = List.foldBack(fun c acc -> (string c) + acc) cs ""
+    
+    let implodeRev (cs : char list) = List.fold(fun acc lst -> (string lst) + acc) "" cs
 
     // Exercise 7
+    let toUpper s = s |> explode1 |>  List.map System.Char.ToUpper |> implode
 
     // Exercise 8
+    let rec ack (m, n) =
+        match (m, n) with
+        | (0, n) -> n + 1
+        | (m, 0) -> ack (m-1, 1)
+        | (m, n) -> ack (m-1, ack(m, n-1))
 
     // Exercise 9
+    let time f =
+        let start = System.DateTime.Now
+        let res = f ()
+        let finish = System.DateTime.Now
+        (res, finish - start)
+            
+    (*
+    time (fun () -> ack (3, 11));;
+    val it : int * System.TimeSpan =
+        (16381, 00:00:02.6444015 {
+            Days = 0;
+            Hours = 0;
+            Milliseconds = 644;
+            Minutes = 0;
+            Seconds = 2;
+            Ticks = 26444015L;
+            TotalDays = 3.060649884e-05;
+            TotalHours = 0.0007345559722;
+            TotalMilliseconds = 2644.4015;
+            TotalMinutes = 0.04407335833;
+            TotalSeconds = 2.6444015;})
+    *)
+        
+    let timeArg1 f a = f a |> time 
 
     // Exercise 10
+    let rec downto3 f n e =
+        match n with
+        | 0 -> e
+        | n ->  downto3 f (n-1) (f n e)
+
+    let fac n = downto3 (*) n 1
+
+    let range g n = 
+        let f x y = (g x) :: y 
+        downto3 f n []
+
+    type word = (char * int) list
+    type squareFun = word -> int -> int -> int
+        
 
     // Exercise 11
+    let hello = [('H', 4);('E', 1);('L', 1);('L', 1);('O', 1)] : word
 
     // Exercise 12
+    let singleLetterScore (word : word) pos acc = snd(word.[pos]) + acc
+    let doubleLetterScore (word : word) pos acc = snd(word.[pos]) * 2 + acc
+    let tripleLetterScore (word : word) pos acc = snd(word.[pos]) * 3 + acc
 
     // Exercise 13
+    let doubleWordScore (word : word) pos acc = acc * 2
+    let tripleWordScore (word : word) pos acc = acc * 3
 
     // Exercise 14
+    let containsNumbers (word : word) pos acc = if List.exists System.Char.IsNumber (List.map fst (word)) then -acc else acc
 
     // Exercise 15
 

@@ -1,5 +1,6 @@
-﻿module StateMonad
+﻿namespace Assignment_6
 
+module StateMonadAssignment =
     type SM<'a>
     type State
 
