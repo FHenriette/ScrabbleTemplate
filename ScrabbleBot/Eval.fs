@@ -1,6 +1,6 @@
 ﻿// Insert your updated Eval.fs file here from Assignment 7. All modules must be internal.
-
-module internal Eval
+namespace Scrabble
+module internal Eval =
 
     open StateMonad
 

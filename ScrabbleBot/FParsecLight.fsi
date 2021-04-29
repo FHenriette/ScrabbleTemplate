@@ -1,4 +1,5 @@
-﻿module internal FParsecLight
+﻿namespace Scrabble
+module internal FParsecLight =
 
     open FParsec
 

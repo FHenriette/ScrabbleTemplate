@@ -1,7 +1,7 @@
 ﻿namespace Assignment_6
 
 module Eval =
-    open StateMonadAssignment
+    open StateMonad
     open System
 
     (* Code for testing *)
@@ -118,11 +118,11 @@ module Eval =
     let rec stmntEval stmnt : SM<unit> = 
         match stmnt with
         | Declare s -> declare s
-        | Ass (s, a) -> failwith "Not implemented" // (arithEval a >>= fun x -> push x) s
-        | Skip -> ret ()
-        | Seq (stm1, stm2) -> failwith "Not implemented" // (stmntEval stm1) >>= fun _ -> (stmntEval stm2) s    
-        | ITE (bExp1, stm1, stm2) -> (boolEval bExp1 >>= fun t -> if t then stmntEval stm1 else stmntEval stm2)
-        | While (bExp1, stm1) -> failwith "Not implemented" // stmntEval (ITE(bExp1, Seq(stm1, While(bExp1, stm1)), Skip)) s
+        | Ass (s, a) -> arithEval a >>= fun x -> update s x
+        | Skip -> ret () 
+        | Seq (stm1, stm2) -> stmntEval stm1 >>>= stmntEval stm2    
+        | ITE (bExp1, stm1, stm2) -> boolEval bExp1 >>= fun t -> push >>>= (if t then stmntEval stm1 else stmntEval stm2) >>>= pop
+        | While (bExp1, stm1) -> boolEval bExp1 >>= fun t -> push >>>= (if t then stmntEval stm1 >>>= stmntEval stmnt else ret ()) >>>= pop
 
 (* Part 3 (Optional) *)
 

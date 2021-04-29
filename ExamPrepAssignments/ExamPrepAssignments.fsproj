@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-<!--    <Compile Include="Assignment 1\Assignment_1.fs" />
+    <!--<Compile Include="Assignment 1\Assignment_1.fs" />
     <Compile Include="Assignment 2\Assignment_2.fs" />
     <Compile Include="Assignment 3\ArithExp.fs" />
     <Compile Include="Assignment 3\State.fs" />
@@ -15,25 +15,27 @@
     <Compile Include="Assignment 4\MultiSet.fsi" />
     <Compile Include="Assignment 4\MultiSet.fs" />
     <Compile Include="Assignment 4\CollectionOfStrings.fsi" />
-    <Compile Include="Assignment 4\CollectionOfStrings.fs" />
+    <Compile Include="Assignment 4\CollectionOfStrings.fs" />-->
     <Compile Include="Assignment 4\Trie.fsi" />
     <Compile Include="Assignment 4\Trie.fs" />
     <Compile Include="Assignment 4\Gaddag.fsi" />
     <Compile Include="Assignment 4\Gaddag.fs" />
-    <Compile Include="Assignment 5\Assignment_5.fs" />-->
-    <Compile Include="Assignment 6\StateMonadAssignment.fsi" />
-    <Compile Include="Assignment 6\StateMonadAssignment.fs" />
+    <Compile Include="Assignment 4\Program.fs" />
+    <!--<Compile Include="Assignment 5\Assignment_5.fs" />
+    <Compile Include="Assignment 6\StateMonad.fsi" />
+    <Compile Include="Assignment 6\StateMonad.fs" />
     <Compile Include="Assignment 6\Eval.fs" />
     <Compile Include="Assignment 6\Program.fs" />
-<!--    <Compile Include="Assignment 7\Eval.fs" />
+    <Compile Include="Assignment 7\StateMonad.fs" />
+    <Compile Include="Assignment 7\StateMonad.fsi" />
+    <Compile Include="Assignment 7\Eval.fs" />
     <Compile Include="Assignment 7\FParsecLight.fs" />
     <Compile Include="Assignment 7\FParsecLight.fsi" />
     <Compile Include="Assignment 7\JParsec.fs" />
     <Compile Include="Assignment 7\JParsec.fsi" />
     <Compile Include="Assignment 7\Parser.fs" />
-    <Compile Include="Assignment 7\Program.fs" />
-    <Compile Include="Assignment 7\StateMonad.fs" />
-    <Compile Include="Assignment 7\StateMonad.fsi" />-->
+    <Compile Include="Assignment 7\Program.fs" />-->
+
   </ItemGroup>
 
 </Project>

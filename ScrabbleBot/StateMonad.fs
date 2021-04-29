@@ -1,7 +1,7 @@
 ﻿// Insert your StateMonad.fs from Assignment 6 here. All modules must be internal.
 
-
-module internal StateMonad
+namespace Scrabble
+module internal StateMonad =
 
     type Error = 
         | VarExists of string

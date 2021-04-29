@@ -1,6 +1,6 @@
 ﻿// Insert your MultiSet.fsi file here. All modules must be internal
-
-module internal MultiSet
+namespace Scrabble
+module internal MultiSet =
     type MultiSet<'a> when 'a : comparison
 
     val empty : MultiSet<'a>

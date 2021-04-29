@@ -1,4 +1,5 @@
-﻿module internal StateMonad
+﻿namespace Scrabble
+module internal StateMonad =
 
     type SM<'a>
     type State

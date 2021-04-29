@@ -1,4 +1,6 @@
-﻿module FParsecLight
+﻿namespace Assignment_7
+
+module FParsecLight =
 
     open FParsec
 

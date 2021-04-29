@@ -2,8 +2,8 @@
 // Also note that the modulse Ass7 and ImpParser have been merged to one module called Parser.
 
 // Insert your Parser.fs file here from Assignment 7. All modules must be internal.
-
-module internal Parser
+namespace Scrabble
+module internal Parser =
 
     open ScrabbleUtil // NEW. KEEP THIS LINE.
     open System

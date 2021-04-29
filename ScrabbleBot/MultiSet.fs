@@ -1,6 +1,6 @@
 ﻿// Insert your MultiSet.fs file here. All modules must be internal
-
-module internal MultiSet
+namespace Scrabble
+module internal MultiSet =
     type 'a MultiSet when 'a : comparison =
         | MS of Map<'a, uint32>
         override this.ToString() = 

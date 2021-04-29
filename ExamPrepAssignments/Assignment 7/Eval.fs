@@ -1,7 +1,7 @@
-﻿module Eval
+﻿namespace Assignment_7
 
-    open StateMonad
-
+module Eval =    
+    open 
     (* Code for testing *)
 
     let hello = [(* INSERT YOUR DEFINITON OF HELLO HERE.*)] 

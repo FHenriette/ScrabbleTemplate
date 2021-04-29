@@ -21,7 +21,7 @@ Group name: &lt;Your group name goes here&gt; (optional since this is hosted in 
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="MultiSet.fsi" />
+    <!--<Compile Include="MultiSet.fsi" />
     <Compile Include="MultiSet.fs" />
     <Compile Include="FParsecLight.fsi" />
     <Compile Include="FParsecLight.fs" />
@@ -31,7 +31,7 @@ Group name: &lt;Your group name goes here&gt; (optional since this is hosted in 
     <Compile Include="Parser.fsi" />
     <Compile Include="Parser.fs" />
     <Compile Include="Scrabble.fsi" />
-    <Compile Include="Scrabble.fs" />
+    <Compile Include="Scrabble.fs" />-->
   </ItemGroup>
 
   <ItemGroup>

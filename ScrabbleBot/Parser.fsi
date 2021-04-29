@@ -1,6 +1,6 @@
 ﻿// This file is new and hides the implementation details of the parser.
-
-module internal Parser
+namespace Scrabble
+module internal Parser =
     
     open ScrabbleUtil
     

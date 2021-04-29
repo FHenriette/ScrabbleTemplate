@@ -1,6 +1,5 @@
-﻿namespace Assignment_7
+﻿namespace Assignment_6
     module StateMonad =
-
         type SM<'a>
         type State
 
