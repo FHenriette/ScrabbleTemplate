@@ -16,4 +16,4 @@
         if s = "" then false else 
             match step (s.[0]) d with
             | None -> false
-            | Some(b, d1) -> if b then true else lookup (s.Remove(0, 1)) d1
+            | Some(b, d1) -> if b && s.Length = 1 then true else lookup (s.Remove(0, 1)) d1
