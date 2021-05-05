@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<Compile Include="Assignment 1\Assignment_1.fs" />
+    <Compile Include="Assignment 1\Assignment_1.fs" />
     <Compile Include="Assignment 2\Assignment_2.fs" />
     <Compile Include="Assignment 3\ArithExp.fs" />
     <Compile Include="Assignment 3\State.fs" />
@@ -20,7 +20,7 @@
     <Compile Include="Assignment 4\Trie.fs" />
     <Compile Include="Assignment 4\Gaddag.fsi" />
     <Compile Include="Assignment 4\Gaddag.fs" />
-    <Compile Include="Assignment 4\Program.fs" />-->
+    <Compile Include="Assignment 4\Program.fs" />
     <Compile Include="Assignment 5\Assignment_5.fs" />
     <Compile Include="Assignment 6\StateMonad.fsi" />
     <Compile Include="Assignment 6\StateMonad.fs" />
