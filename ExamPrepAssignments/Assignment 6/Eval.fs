@@ -300,9 +300,9 @@ let stmnt2SquareFun (stm : stmnt) : squareFun =
     //mkState [("x", 5); ("y", 42)] hello ["_pos_"; "_result_"]
     let stmntToSquareFun (stm: stm) : squareFun =  
         fun w pos acc -> 
-            let initS =  mkState [("_pos_", pos); ("_acc_", acc); ("_result_", 0)] w ["_pos_"; "_result_"]
+            let initS = mkState [("_pos_", pos); ("_acc_", acc); ("_result_", 0)] w ["_pos_"; "_result_"]
             let meh = stmntEval2 stm 
-            let meh2 = lookup "_result_"
+            let meh2 = meh >>= (lookup "_result_")
             evalSM initS meh2
 
     type coord = int * int
