@@ -276,11 +276,34 @@ module Eval =
 
 (* Part 4 *) 
 
+(*
+
+type stm =                (* statements *)
+| Declare of string       (* variable declaration *)
+| Ass of string * aExp    (* variable assignment *)
+| Skip                    (* nop *)
+| Seq of stm * stm        (* sequential composition *)
+| ITE of bExp * stm * stm (* if-then-else statement *)
+| While of bExp * stm     (* while statement *)
+
+let stmnt2SquareFun (stm : stmnt) : squareFun = 
+ fun w pos acc -> 
+  let s = Map.ofList [("_pos_", pos); ("_acc_", acc)]
+  let res = evalStmnt stm w s
+  Map.find ("_result_") res
+
+*)
+
     type word = (char * int) list
     type squareFun = word -> int -> int -> Result<int, Error>
 
-    let stmntToSquareFun stm = failwith "Not implemented"
-
+    //mkState [("x", 5); ("y", 42)] hello ["_pos_"; "_result_"]
+    let stmntToSquareFun (stm: stm) : squareFun =  
+        fun w pos acc -> 
+            let initS =  mkState [("_pos_", pos); ("_acc_", acc); ("_result_", 0)] w ["_pos_"; "_result_"]
+            let meh = stmntEval2 stm 
+            let meh2 = lookup "_result_"
+            evalSM initS meh2
 
     type coord = int * int
 
