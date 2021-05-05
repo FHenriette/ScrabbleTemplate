@@ -25,11 +25,11 @@ let main argv =
     //printfn "\n\nMary Poppins says: F %A" (Dict.lookup "SUPERCALIFRAGALISTICEXPIALIDOCIOUS" dict)
 
     let ss = readLines path |> Seq.toList
-    let dict = List.fold (fun acc s -> Dict.insert s acc) (Dict.empty ()) ss
+    let dict = List.fold (fun acc s -> Trie.insert s acc) (Trie.empty ()) ss
     let reverse (s : string) = Seq.rev s |> Seq.toArray |> System.String
-    List.iter (fun s -> if Dict.lookup (reverse s) dict then printfn "%s" s else ()) ss
+    List.iter (fun s -> if Trie.lookup (reverse s) dict then printfn "%s" s else ()) ss
 
-    printfn "F %A" (Dict.lookup "AB" dict)
+    printfn "F %A" (Trie.lookup "AB" dict)
 
     printfn ""
     0 // return an integer exit code

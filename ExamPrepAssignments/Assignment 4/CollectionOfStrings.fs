@@ -1,4 +1,4 @@
-﻿module Dict
+﻿module CollectionOfStrings
     type Dict = 
         | D of string List
 

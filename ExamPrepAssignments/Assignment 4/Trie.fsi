@@ -1,4 +1,4 @@
-﻿module Dict 
+﻿module Trie
     type Dict
 
     val empty : unit -> Dict

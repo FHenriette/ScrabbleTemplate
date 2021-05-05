@@ -136,7 +136,20 @@ module Eval =
         
     let prog = new StateBuilder()
 
-    let arithEval2 a = failwith "Not implemented"
+    let rec arithEval2 a : SM<int> =
+        match a with
+        | N n -> prog.Return n
+        | V x -> lookup x
+        | PV x -> (arithEval x >>= fun a -> pointValue a)
+        | WL -> wordLength
+        | Add (a1, a2) -> binop (+) (arithEval a1) (arithEval a2)
+        | Sub (a1, a2) -> binop (-) (arithEval a1) (arithEval a2)
+        | Mul (a1, a2) -> binop (*) (arithEval a1) (arithEval a2)
+        | Div (a1, a2) -> div (arithEval a1) (arithEval a2)
+        | Mod (a1, a2) -> divisor (%) (arithEval a1) (arithEval a2)
+        | CharToInt c  -> (charEval c >>= fun a -> ret (int a))
+
+
     let charEval2 c = failwith "Not implemented"
     let rec boolEval2 b = failwith "Not implemented"
 

@@ -1,4 +1,4 @@
-﻿module Dict 
+﻿module Trie
     type Dict =
         | D of Map<char, bool * Dict>
 
