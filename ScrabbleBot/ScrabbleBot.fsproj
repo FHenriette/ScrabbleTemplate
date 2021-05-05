@@ -36,7 +36,7 @@ Group name: &lt;Your group name goes here&gt; (optional since this is hosted in 
 
   <ItemGroup>
     <PackageReference Include="FParsec" Version="1.1.1" />
-    <PackageReference Include="ScrabbleServer" Version="1.0.7" />
+    <PackageReference Include="ScrabbleServer" Version="1.0.11" />
   </ItemGroup>
 
   <ItemGroup>

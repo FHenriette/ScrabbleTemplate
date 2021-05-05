@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Oxyphenbutazone" Version="1.0.6" />
-    <PackageReference Include="ScrabbleServer" Version="1.0.7" />
+    <PackageReference Include="Oxyphenbutazone" Version="1.0.9" />
+    <PackageReference Include="ScrabbleServer" Version="1.0.11" />
   </ItemGroup>
 
   <ItemGroup>
