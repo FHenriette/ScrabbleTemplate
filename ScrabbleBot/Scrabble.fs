@@ -6,6 +6,7 @@ open ScrabbleUtil.ServerCommunication
 open System.IO
 
 open ScrabbleUtil.DebugPrint
+open Scrabble
 
 // The RegEx module is only used to parse human input. It is not used for the final product.
 
