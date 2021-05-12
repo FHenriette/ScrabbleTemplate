@@ -109,3 +109,29 @@ and charEval (c:cExp) (w:word) (s:state) =
 
 
 // Exercise 8
+let arithEvalTail (a:aExp) (w:word) (s:state) =
+    let rec aux c =
+        match a with
+        | N x -> c x
+        | V k -> let r = Map.tryFind k s 
+                 match r with
+                 | Some x -> c x
+                 | None -> 0 
+        | WL -> w.Length
+        | PV x -> c (snd w.[(arithEvalSimple x w s)])
+        | Add (x, y) -> c (arithEvalSimple x w s) + (arithEvalSimple y w s)
+        | Sub (x, y) -> c (arithEvalSimple x w s) - (arithEvalSimple y w s)
+        | Mul (x, y) -> (arithEvalSimple x w s) * (arithEvalSimple y w s)
+        | CharToInt x -> (int) (charEval x w s)
+    aux id
+
+let charEvalTail (c:cExp) (w:word) (s:state) =
+    let rec aux con =
+        match c with
+        | C chr -> con chr
+        | CV a -> fst w.[(arithEvalSimple a w s)]
+        | ToUpper x -> System.Char.ToUpper (charEval x w s)
+        | ToLower x -> System.Char.ToLower (charEval x w s)
+        | IntToChar x -> (char) (arithEvalSimple x w s)
+    aux id
+    

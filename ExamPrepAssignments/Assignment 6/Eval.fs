@@ -252,13 +252,13 @@ module Eval =
                 do! stmntEval2 stm2
             }
         | ITE (bExp1, stm1, stm2) -> 
-            prog { //boolEval bExp1 >>= fun t -> push >>>= (if t then stmntEval stm1 else stmntEval stm2) >>>= pop
+            prog { 
                 let! b = boolEval2 bExp1
                 do! push
                 do! (if b then stmntEval stm1 else stmntEval stm2)
                 do! pop
             }
-        | While (bExp1, stm1) -> //boolEval bExp1 >>= fun t -> push >>>= (if t then stmntEval stm1 >>>= stmntEval stmnt else ret ()) >>>= pop
+        | While (bExp1, stm1) -> 
              prog {
                 let! b = boolEval2 bExp1
                 do! push
@@ -276,34 +276,14 @@ module Eval =
 
 (* Part 4 *) 
 
-(*
-
-type stm =                (* statements *)
-| Declare of string       (* variable declaration *)
-| Ass of string * aExp    (* variable assignment *)
-| Skip                    (* nop *)
-| Seq of stm * stm        (* sequential composition *)
-| ITE of bExp * stm * stm (* if-then-else statement *)
-| While of bExp * stm     (* while statement *)
-
-let stmnt2SquareFun (stm : stmnt) : squareFun = 
- fun w pos acc -> 
-  let s = Map.ofList [("_pos_", pos); ("_acc_", acc)]
-  let res = evalStmnt stm w s
-  Map.find ("_result_") res
-
-*)
-
     type word = (char * int) list
     type squareFun = word -> int -> int -> Result<int, Error>
 
-    //mkState [("x", 5); ("y", 42)] hello ["_pos_"; "_result_"]
     let stmntToSquareFun (stm: stm) : squareFun =  
         fun w pos acc -> 
             let initS = mkState [("_pos_", pos); ("_acc_", acc); ("_result_", 0)] w ["_pos_"; "_result_"]
-            let meh = stmntEval2 stm 
-            let meh2 = meh >>= (lookup "_result_")
-            evalSM initS meh2
+            let look = stmntEval stm >>= lookup ("_result_")
+            evalSM initS look
 
     type coord = int * int
 
