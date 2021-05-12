@@ -1,4 +1,4 @@
-﻿module internal MultiSetAssignment
+﻿module MultiSetAssignment
     // Exercise 1
     type 'a MultiSet when 'a : comparison =
         | MS of Map<'a, uint32>

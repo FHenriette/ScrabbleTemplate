@@ -282,14 +282,15 @@ module Eval =
     let stmntToSquareFun (stm: stm) : squareFun =  
         fun w pos acc -> 
             let initS = mkState [("_pos_", pos); ("_acc_", acc); ("_result_", 0)] w ["_pos_"; "_result_"]
-            let look = stmntEval stm >>= lookup ("_result_")
+            let look = stmntEval stm >>>= lookup "_result_"
             evalSM initS look
 
     type coord = int * int
 
     type boardFun = coord -> Result<squareFun option, Error> 
 
-    let stmntToBoardFun stm m = failwith "Not implemented"
+    let rec stmntToBoardFun stm m : boardFun = failwith "Not implemented"
+         
 
     type board = {
         center        : coord

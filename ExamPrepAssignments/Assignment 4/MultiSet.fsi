@@ -1,4 +1,4 @@
-﻿module MultiSetAssignments
+﻿module MultiSetAssignment
     type MultiSet<'a> when 'a : comparison
 
     val empty : MultiSet<'a>

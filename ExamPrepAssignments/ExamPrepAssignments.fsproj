@@ -21,12 +21,12 @@
     <Compile Include="Assignment 4\Gaddag.fsi" />
     <Compile Include="Assignment 4\Gaddag.fs" />
     <Compile Include="Assignment 4\Program.fs" />
-    <Compile Include="Assignment 5\Assignment_5.fs" />
+    <Compile Include="Assignment 5\Assignment_5.fs" />-->
     <Compile Include="Assignment 6\StateMonad.fsi" />
     <Compile Include="Assignment 6\StateMonad.fs" />
     <Compile Include="Assignment 6\Eval.fs" />
-    <Compile Include="Assignment 6\Program.fs" />-->
-    <Compile Include="Assignment 7\StateMonad.fsi" />
+    <Compile Include="Assignment 6\Program.fs" />
+    <!--<Compile Include="Assignment 7\StateMonad.fsi" />
     <Compile Include="Assignment 7\StateMonad.fs" />
     <Compile Include="Assignment 7\Eval.fs" />
     <Compile Include="Assignment 7\FParsecLight.fsi" />
@@ -34,7 +34,7 @@
     <Compile Include="Assignment 7\JParsec.fsi" />
     <Compile Include="Assignment 7\JParsec.fs" />
     <Compile Include="Assignment 7\Parser.fs" />
-    <Compile Include="Assignment 7\Program.fs" />
+    <Compile Include="Assignment 7\Program.fs" />-->
 
   </ItemGroup>
 
