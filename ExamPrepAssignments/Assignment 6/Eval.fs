@@ -6,7 +6,7 @@ module Eval =
 
     (* Code for testing *)
 
-    let hello = [(* INSERT YOUR DEFINITON OF HELLO HERE.*)] 
+    let hello =  [('H', 4)(**;('E', 1);('L', 1);('L', 1);('O', 1)**)] 
     let state = mkState [("x", 5); ("y", 42)] hello ["_pos_"; "_result_"]
     let emptyState = mkState [] [] []
 
@@ -79,32 +79,31 @@ module Eval =
         | V x -> lookup x
         | PV x -> (arithEval x >>= fun a -> pointValue a)
         | WL -> wordLength
-        | Add (a1, a2) -> binop (+) (arithEval a1) (arithEval a2)
-        | Sub (a1, a2) -> binop (-) (arithEval a1) (arithEval a2)
-        | Mul (a1, a2) -> binop (*) (arithEval a1) (arithEval a2)
+        | Add (e1, e2) -> arithEval e1 >>= (fun e -> arithEval e2 >>= (fun r -> ret (e + r)))
+        | Sub (e1, e2) -> arithEval e1 >>= (fun e -> arithEval e2 >>= (fun r -> ret (e - r)))
+        | Mul (e1, e2) -> arithEval e1 >>= (fun e -> arithEval e2 >>= (fun r -> ret (e * r)))
         | Div (a1, a2) -> div (arithEval a1) (arithEval a2)
-        | Mod (a1, a2) -> divisor (%) (arithEval a1) (arithEval a2)
+        | Mod (e1, e2) -> arithEval e1 >>= (fun r -> arithEval e2 >>= (fun e -> if (e <> 0) then ret (r % e) else fail DivisionByZero))
         | CharToInt c  -> (charEval c >>= fun a -> ret (int a))
     
     and charEval c : SM<char> = 
         match c with
         | C x -> ret x
-        | CV x -> (arithEval x >>= fun a -> characterValue a)
+        | CV x -> (arithEval x >>= characterValue)
         | ToLower x -> (charEval x >>= fun a -> ret (Char.ToLower(a)))
         | ToUpper x -> (charEval x >>= fun a -> ret (Char.ToUpper(a)))
         | IntToChar x -> (arithEval x >>= fun a -> ret (char a))
 
-    let boolEval b : SM<bool> = 
-        let rec aux = function
+    let rec boolEval b : SM<bool> = 
+        match b with
         | TT -> ret true
         | FF -> ret false
-        | AEq (x,y) -> (binop (=) (arithEval x) (arithEval y))
-        | ALt (x,y) -> (binop (<) (arithEval x) (arithEval y))
-        | Not bx -> (unop (not) (aux bx))
-        | Conj (bx, by) -> binop (&&) (aux bx) (aux by)
+        | AEq (a1, a2) -> arithEval a1 >>= (fun e -> arithEval a2 >>= (fun r -> ret (e = r)))
+        | ALt (a1, a2) -> arithEval a1 >>= (fun e -> arithEval a2 >>= (fun r -> ret (e < r)))
+        | Not e -> boolEval e >>= (fun r -> ret (not r))
+        | Conj (a1, a2) -> boolEval a1 >>= (fun e -> boolEval a2 >>= (fun r -> ret (e && r)))
         | IsLetter cx -> (charEval cx >>= fun a -> ret (Char.IsLetter(a)))
         | IsDigit cx -> (charEval cx >>= fun a -> ret (Char.IsDigit(a)))
-        aux b
 
 
     type stm =                (* statements *)
@@ -122,7 +121,7 @@ module Eval =
         | Skip -> ret () 
         | Seq (stm1, stm2) -> stmntEval stm1 >>>= stmntEval stm2    
         | ITE (bExp1, stm1, stm2) -> boolEval bExp1 >>= fun t -> push >>>= (if t then stmntEval stm1 else stmntEval stm2) >>>= pop
-        | While (bExp1, stm1) -> boolEval bExp1 >>= fun t -> push >>>= (if t then stmntEval stm1 >>>= stmntEval stmnt else ret ()) >>>= pop
+        | While (bExp1, stm1) -> boolEval bExp1 >>= (fun t -> if t then push >>>= stmntEval stm1 >>>= pop >>>= stmntEval (While (bExp1, stm1)) else ret ()) >>>= pop
 
 (* Part 3 (Optional) *)
 
