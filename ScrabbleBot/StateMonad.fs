@@ -2,7 +2,6 @@
 
 namespace Scrabble
 module internal StateMonad =
-
     type Error = 
         | VarExists of string
         | VarNotFound of string
@@ -14,16 +13,16 @@ module internal StateMonad =
         | Success of 'a
         | Failure of 'b
 
-    type State = { vars     : Map<string, int> list
-                   word     : (char * int) list 
-                   reserved : Set<string> }
+    type State = {  vars     : Map<string, int> list
+                    word     : (char * int) list 
+                    reserved : Set<string> }
 
     type SM<'a> = S of (State -> Result<'a * State, Error>)
 
     let mkState lst word reserved = 
-           { vars = [Map.ofList lst];
-             word = word;
-             reserved = Set.ofList reserved }
+            { vars = [Map.ofList lst];
+                word = word;
+                reserved = Set.ofList reserved }
 
     let evalSM (s : State) (S a : SM<'a>) : Result<'a, Error> =
         match a s with
@@ -32,11 +31,11 @@ module internal StateMonad =
 
     let bind (f : 'a -> SM<'b>) (S a : SM<'a>) : SM<'b> =
         S (fun s ->
-              match a s with
-              | Success (b, s') -> 
-                match f b with 
-                | S g -> g s'
-              | Failure err     -> Failure err)
+            match a s with
+            | Success (av, s') ->
+                let (S g) = f av
+                g s'
+            | Failure err -> Failure err)
 
 
     let ret (v : 'a) : SM<'a> = S (fun s -> Success (v, s))
@@ -49,21 +48,21 @@ module internal StateMonad =
         S (fun s -> Success ((), {s with vars = Map.empty :: s.vars}))
 
     let pop : SM<unit> = 
-        S (fun s -> Success ((), {s with vars = List.tail s.vars}))      
+        S (fun s -> Success ((), {s with vars = s.vars.Tail}))       
 
-    let wordLength : SM<int> = S (fun s -> Success(List.length s.word, s))      
+    let wordLength : SM<int> = S (fun s -> Success (s.word.Length, s))     
 
     let characterValue (pos : int) : SM<char> = 
         S (fun s ->
-            if s.word.Length < pos
-            then Success(fst (List.item pos s.word), s)
+            if (pos < s.word.Length && pos >= 0) 
+            then Success (s.word.[pos] |> fst, s)
             else Failure(IndexOutOfBounds pos)
             )
 
     let pointValue (pos : int) : SM<int> = 
         S (fun s ->
-            if s.word.Length < pos
-            then Success(snd(List.item pos s.word), s)
+            if s.word.Length > pos && pos >= 0
+            then (Success(s.word.[pos] |> snd, s)) 
             else Failure(IndexOutOfBounds pos)
             )
 
@@ -77,27 +76,29 @@ module internal StateMonad =
                 | None   -> aux ms
 
         S (fun s -> 
-              match aux (s.vars) with
-              | Some v -> Success (v, s)
-              | None   -> Failure (VarNotFound x))
+                match aux (s.vars) with
+                | Some v -> Success (v, s)
+                | None   -> Failure (VarNotFound x))
 
     let declare (var : string) : SM<unit> = 
         S (fun s ->
             match s with
-            | _ when Set.contains var s.reserved        -> Failure(ReservedName var)
-            | _ when Map.containsKey var s.vars.Head    -> Failure(VarExists var)
-            | _ -> Success((), {s with vars = (Map.add var 0 Map.empty)::s.vars}))
+            | _ when Set.exists (fun e -> e = var) s.reserved -> Failure (ReservedName var)
+            | _ when Map.exists (fun e _ -> e = var) s.vars.Head -> Failure (VarExists var)
+            | _ -> Success ((), {s with vars = Map.add var 0 Map.empty :: s.vars}))
 
     let update (var : string) (value : int) : SM<unit> = 
-        let rec aux =
+        let rec aux acc =
             function
             | []        -> None
             | m :: ms   ->
                 match Map.tryFind var m with
-                | Some v -> Some v
-                | None   -> aux ms
+                | Some _ -> Some (acc @ [Map.add var value m] @ ms)
+                | None -> aux (acc @ [m]) ms
 
         S (fun s -> 
-                match aux (s.vars) with
-                | Some v -> Success((), {s with vars = (Map.add var value Map.empty)::s.vars})
+                match aux [] (s.vars) with
+                | Some m -> Success((), { s with vars = m })
                 | None -> Failure(VarNotFound var))
+
+    
