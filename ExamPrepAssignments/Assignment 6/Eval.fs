@@ -6,7 +6,7 @@ module Eval =
 
     (* Code for testing *)
 
-    let hello =  [('H', 4)(**;('E', 1);('L', 1);('L', 1);('O', 1)**)] 
+    let hello =  [('H', 4);('E', 1);('L', 1);('L', 1);('O', 1)] 
     let state = mkState [("x", 5); ("y", 42)] hello ["_pos_"; "_result_"]
     let emptyState = mkState [] [] []
 
@@ -121,7 +121,7 @@ module Eval =
         | Skip -> ret () 
         | Seq (stm1, stm2) -> stmntEval stm1 >>>= stmntEval stm2    
         | ITE (bExp1, stm1, stm2) -> boolEval bExp1 >>= fun t -> push >>>= (if t then stmntEval stm1 else stmntEval stm2) >>>= pop
-        | While (bExp1, stm1) -> boolEval bExp1 >>= (fun t -> if t then push >>>= stmntEval stm1 >>>= pop >>>= stmntEval (While (bExp1, stm1)) else ret ()) >>>= pop
+        | While (bExp1, stm1) -> boolEval bExp1 >>= (fun t -> if t then push >>>= stmntEval stm1 >>>= pop >>>= stmntEval (While (bExp1, stm1)) else ret ())
 
 (* Part 3 (Optional) *)
 
@@ -288,7 +288,16 @@ module Eval =
 
     type boardFun = coord -> Result<squareFun option, Error> 
 
-    let rec stmntToBoardFun stm m : boardFun = failwith "Not implemented"
+    let sqfun = stmntToSquareFun (Seq (Declare ("_x_"), Seq (Declare "_y_", Ass ("_x_", N 0))))
+    let ma = Map.ofList([(0,sqfun)])
+
+    let rec stmntToBoardFun stm m : boardFun = 
+        fun c -> 
+            stmntEval stm >>>= lookup "_result_" >>= (fun x ->
+                match (Map.tryFind x m) with
+                | Some sf -> ret (Some sf)
+                | None    -> ret (None)
+                ) |> evalSM (mkState [("_x_", fst c); ("_y_", snd c); ("_result_", 0)] [] ["_x_"; "_y_"; "_result_"])
          
 
     type board = {
@@ -297,5 +306,9 @@ module Eval =
         squares       : boardFun
     }
 
-    let mkBoard c defaultSq boardStmnt ids = failwith "Not implemented"
-    
+    let mkBoard c (defaultSq : stm) (boardStmnt : stm) (ids : (int * stm) list) : board = {
+        center = c
+        defaultSquare = stmntToSquareFun defaultSq
+        squares = List.map (fun (i, sq) -> (i, stmntToSquareFun sq)) ids |> Map.ofList |> stmntToBoardFun boardStmnt
+    }
+        
