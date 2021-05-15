@@ -1,4 +1,7 @@
 ﻿namespace Assignment_7
+
+open JParsec
+
 module ImpParser =
 
     open Eval
@@ -33,22 +36,35 @@ module ImpParser =
     let pdo       = pstring "do"
     let pdeclare  = pstring "declare"
 
-    let whitespaceChar = pstring "whitespaceChar"
+    let whitespaceChar = 
+        let predicate = System.Char.IsWhiteSpace
+        satisfy predicate
 
     let pletter        = 
         let predicate = System.Char.IsLetter
-        pstring "letter" |> satisfy predicate
+        satisfy predicate  
 
-    let palphanumeric  = pstring "alphanumeric"
+    let palphanumeric  = 
+        let predicate = System.Char.IsLetterOrDigit
+        satisfy predicate
 
-    let spaces         = pstring "spaces"
-    let spaces1        = pstring "spaces"
+    let spaces         = whitespaceChar |> many
 
-    let (.>*>.) _ _ = failwith "not implemented"
-    let (.>*>) _ _  = failwith "not implemented"
-    let (>*>.) _ _  = failwith "not implemented"
+    let spaces1        = whitespaceChar |> many1
+    
+    let (.>*>.) p1 p2 = p1 .>> spaces .>>. p2
+    let (.>*>) p1 p2  = p1 .>> spaces .>> p2
+    let (>*>.) p1 p2 = p1 .>> spaces >>. p2
 
-    let parenthesise p = p // incorrect (not implemented)
+    let parenthesise p = 
+        let start = pchar '('
+        let ending = pchar ')'
+        start >*>. p .>*> ending 
+
+    let brackets p = 
+        let start = pchar '{'
+        let ending = pchar '}'
+        start >*>. p .>*> ending 
 
     let pid = pstring "not implemented"
 
