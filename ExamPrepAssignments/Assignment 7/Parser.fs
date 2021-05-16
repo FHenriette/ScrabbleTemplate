@@ -1,4 +1,7 @@
 ﻿namespace Assignment_7
+
+open JParsec
+
 module ImpParser =
 
     open Eval
@@ -36,8 +39,9 @@ module ImpParser =
     let whitespaceChar = pstring "whitespaceChar"
 
     let pletter        = 
+        let input = pchar "letter"
         let predicate = System.Char.IsLetter
-        pstring "letter" |> satisfy predicate
+        TextParser.runParser input <| satisfy predicate
 
     let palphanumeric  = pstring "alphanumeric"
 
