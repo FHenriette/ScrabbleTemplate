@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Aug_2020\Exam_2020.fs" />
+    <Compile Include="Maj_2019\May_2019.fs" />
+    <Compile Include="Maj_2020\May_2020.fs" />
+    <Compile Include="Aug_2019\Exam_2019.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+</Project>
