@@ -65,11 +65,24 @@ module ImpParser =
         let start = pchar '{'
         let ending = pchar '}'
         start >*>. p .>*> ending 
-
-    let pid = pstring "not implemented"
-
     
-    let unop _ = failwith "not implemented"
+    let fromCharListToString (cs : char list) = 
+        let rec aux acc (xs : char list) =
+            match xs with
+            | [] -> pstring acc
+            | y::ys -> aux (acc + string y) ys
+        aux "" cs
+
+    (*
+    Using the parsers pletter , palphanumeric , and many from Assignment 7.2, along with the
+    combinators (|>>) and .>>. (not .>*>. as we do not want spaces in our identifiers), and
+    pchar , create a parser pid : Parser<string> that parses identifiers that start with a single
+    letter or underscore followed by an arbitrary number of letters, numbers, or underscores.
+    *)
+
+    let pid = pchar '_' <|> pletter <|> palphanumeric |> many |>> fromCharListToString
+    
+    let unop op a = failwith "not implemented"
     let binop _ p1 p2 = p1 .>>. p2 // incorrect (not implemented)
 
     let TermParse, tref = createParserForwardedToRef<aExp>()
