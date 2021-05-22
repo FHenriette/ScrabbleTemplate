@@ -117,18 +117,4 @@ module Code_Comprehension =
             match f x ys with
             | Some ys' -> Some (y::ys')
             | None     -> None
-
-
-
-    let rec fOpt x =
-        function
-        | []                -> None
-        | y::ys when x = y  -> Some ys
-        | y::ys -> Some (y::ys) |> Option.map (fOpt x ys)
-        
-
-    let rec gOpt xs =
-        function
-        | []    -> xs = []
-        | y::ys -> (false, Some xs) |> Option.map (gOpt xs ys) |>  Option.defaultValue
     

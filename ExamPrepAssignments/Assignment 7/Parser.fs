@@ -80,10 +80,10 @@ module ImpParser =
     letter or underscore followed by an arbitrary number of letters, numbers, or underscores.
     *)
     
-    let pid = pchar '_' <|> pletter .>>. many (palphanumeric <|> pchar '_') |>> fun (_, _) -> fromCharListToString
+    let pid = pchar '_' <|> pletter .>>. many (palphanumeric <|> pchar '_') |>> fun (a, b) -> (a :: b) |> System.String.Concat
     
-    let unop op a = failwith "not implemented"
-    let binop _ p1 p2 = p1 .>>. p2 // incorrect (not implemented)
+    let unop op a : Parser<'b> = op >*>. a
+    let binop op p1 p2 = p1 .>*> op .>*>. p2
 
     let TermParse, tref = createParserForwardedToRef<aExp>()
     let ProdParse, pref = createParserForwardedToRef<aExp>()
