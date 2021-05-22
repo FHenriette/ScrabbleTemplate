@@ -79,8 +79,8 @@ module ImpParser =
     pchar , create a parser pid : Parser<string> that parses identifiers that start with a single
     letter or underscore followed by an arbitrary number of letters, numbers, or underscores.
     *)
-
-    let pid = pchar '_' <|> pletter <|> palphanumeric |> many |>> fromCharListToString
+    
+    let pid = pchar '_' <|> pletter .>>. many (palphanumeric <|> pchar '_') |>> fun (_, _) -> fromCharListToString
     
     let unop op a = failwith "not implemented"
     let binop _ p1 p2 = p1 .>>. p2 // incorrect (not implemented)
