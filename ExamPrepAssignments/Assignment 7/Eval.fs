@@ -275,39 +275,26 @@ module Eval =
 (* Part 4 *) 
 
     type word = (char * int) list
-    type squareFun = word -> int -> int -> Result<int, Error>
+    type squareFun = word -> int -> int -> int
 
     let stmntToSquareFun (stm: stm) : squareFun =  
         fun w pos acc -> 
             let initS = mkState [("_pos_", pos); ("_acc_", acc); ("_result_", 0)] w ["_pos_"; "_result_"]
             let look = stmntEval stm >>>= lookup "_result_"
-            evalSM initS look
+            evalSM initS look |>
+            (fun x -> match x with | Success v -> v | Failure _ -> 0)
 
     type coord = int * int
 
-    type boardFun = coord -> Result<squareFun option, Error> 
+    type boardFun = coord -> squareFun option
 
-    let sqfun = stmntToSquareFun (Seq (Declare ("_x_"), Seq (Declare "_y_", Ass ("_x_", N 0))))
-    let ma = Map.ofList([(0,sqfun)])
-
-    let rec stmntToBoardFun stm m : boardFun = 
-        fun c -> 
+    let rec stmntToBoardFun stm m = 
+        fun (a,b) -> 
             stmntEval stm >>>= lookup "_result_" >>= (fun x ->
                 match (Map.tryFind x m) with
                 | Some sf -> ret (Some sf)
                 | None    -> ret (None)
-                ) |> evalSM (mkState [("_x_", fst c); ("_y_", snd c); ("_result_", 0)] [] ["_x_"; "_y_"; "_result_"])
-         
-
-    type board = {
-        center        : coord
-        defaultSquare : squareFun
-        squares       : boardFun
-    }
-
-    let mkBoard c (defaultSq : stm) (boardStmnt : stm) (ids : (int * stm) list) : board = {
-        center = c
-        defaultSquare = stmntToSquareFun defaultSq
-        squares = List.map (fun (i, sq) -> (i, stmntToSquareFun sq)) ids |> Map.ofList |> stmntToBoardFun boardStmnt
-    }
+                ) |> 
+            evalSM (mkState [("_x_", a); ("_y_", b); ("_result_", 0)] [] ["_x_"; "_y_"; "_result_"]) |>
+            (fun x -> match x with | Success v -> v | Failure _ -> None)
             

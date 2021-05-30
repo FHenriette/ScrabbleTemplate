@@ -88,24 +88,77 @@ module ImpParser =
     let TermParse, tref = createParserForwardedToRef<aExp>()
     let ProdParse, pref = createParserForwardedToRef<aExp>()
     let AtomParse, aref = createParserForwardedToRef<aExp>()
+    
+    let cParse, cref = createParserForwardedToRef<cExp>()
+    
+    let bTermParse, btref = createParserForwardedToRef<bExp>()
+    let bProdParse, bpref = createParserForwardedToRef<bExp>()
+    let bAtomParse, baref = createParserForwardedToRef<bExp>()
+
+    let sTermParse, stref = createParserForwardedToRef<stm>()
+    let sAtomParse, saref = createParserForwardedToRef<stm>()
 
     let AddParse = binop (pchar '+') ProdParse TermParse |>> Add <?> "Add"
-    do tref := choice [AddParse; ProdParse]
+    let SubParse = binop (pchar '-') ProdParse TermParse |>> Sub <?> "Sub"
+    do tref := choice [AddParse; SubParse; ProdParse] <?> "string"
 
-    let MulParse = binop (pchar '*') AtomParse ProdParse |>> Mul <?> "Mul"
-    do pref := choice [MulParse; AtomParse]
+    let MulParse = binop (pchar '*') AtomParse ProdParse |>> Mul        <?> "Mul"
+    let DivParse = binop (pchar '/') AtomParse ProdParse |>> Div        <?> "Div"
+    let ModParse = binop (pchar '%') AtomParse ProdParse |>> Mod        <?> "Mod"
+    let CharToInt = pCharToInt >*>. parenthesise cParse |>> CharToInt   <?> "CharToInt"
+    do pref := choice [MulParse; DivParse; ModParse; CharToInt; AtomParse] <?> "string"
 
+    let NegParse = pchar '-' >>. pint32 |>> (fun a -> Mul (N -1, N a))
+    let PointValueParse = pPointValue >*>. parenthesise TermParse |>> PV <?> "PointValue"
+    let VariableParse = pid |>> V <?> "Var"
     let NParse   = pint32 |>> N <?> "Int"
     let ParParse = parenthesise TermParse
-    do aref := choice [NParse; ParParse]
+    do aref := choice [ NegParse; PointValueParse; VariableParse; NParse; ParParse ] <?> "string"
 
     let AexpParse = TermParse 
 
-    let CexpParse = pstring "not implemented"
+    let cToLower = pstring "toLower" >*>. parenthesise cParse |>> ToLower           <?> "ToLower"
+    let cToUpper = pstring "toUpper" >*>. parenthesise cParse |>> ToUpper           <?> "ToUpper"
+    let cIntToChar = pIntToChar >*>. parenthesise TermParse |>> IntToChar           <?> "IntToChar"
+    let cChar = pchar '\'' >>. (pletter <|> whitespaceChar) .>> pchar '\'' |>> C    <?> "Char"
+    let cCharValue = pstring "charValue" >*>. parenthesise TermParse |>> CV         <?> "CharValue"
+    do cref := choice [ cCharValue; cChar; cIntToChar; cToUpper; cToLower ]         <?> "string"
 
-    let BexpParse = pstring "not implemented"
+    let CexpParse = cParse
 
-    let stmntParse = pstring "not implemented"
+    let bConj = binop (pstring @"/\") bProdParse bTermParse |>> (fun (a, b) -> a .&&. b) <?> "Conjunction"
+    let bDisj = binop (pstring @"\/") bProdParse bTermParse |>> (fun (a, b) -> a .||. b) <?> "Disjunction"
+    do btref := choice [ bConj; bDisj; bProdParse ] <?> "string"
+
+    let bEqual = binop (pchar '=') TermParse TermParse |>> (fun (a, b) -> a .=. b)                              <?> "Equality"
+    let bNEqual = binop (pstring "<>") TermParse TermParse |>> (fun (a, b) -> a .<>. b)                         <?> "Inequality"
+    let bLessThan = binop (pchar '<') TermParse TermParse |>> (fun (a, b) -> a .<. b)                           <?> "Less than"
+    let bLessThanEqual = binop (pstring "<=") TermParse TermParse |>> (fun (a, b) -> a .<=. b)                  <?> "Less than equal"
+    let bGreaterThan = binop (pchar '>') TermParse TermParse |>> (fun (a, b) -> a .>. b)                        <?> "Greater than"
+    let bGreaterThanEqual = binop (pstring ">=") TermParse TermParse |>> (fun (a, b) -> a .>=. b)               <?> "Greater than equal"
+    do bpref := choice [ bEqual; bNEqual; bLessThan; bLessThanEqual; bGreaterThan; bLessThanEqual; bAtomParse ] <?> "string"
+
+    let bTrue = pstring "true" |>> fun _ -> TT
+    let bFalse = pstring "false" |>> fun _ -> FF
+    let bParens = parenthesise bTermParse
+    let bNot = unop (pchar '~') bAtomParse |>> (fun a -> (~~) a) <?> "Not"
+    let bIsLetter = cParse |>> IsLetter
+    let bIsDigit = cParse |>> IsDigit
+    do baref := choice [ bNot; bIsLetter; bIsDigit; bTrue; bFalse; bParens ] <?> "string"
+
+    let BexpParse = bTermParse
+
+    let sSemi = binop (pchar ';') sAtomParse sTermParse |>> Seq
+    do stref := choice [sSemi; sAtomParse] <?> "string"
+
+    let sif = pstring "if" >*>. (parenthesise bTermParse .>*> pstring "then" .>*>. ( brackets sTermParse) ) |>> fun (a,b) -> ITE (a, b, Skip)
+    let sife = pstring "if" >*>. (parenthesise bTermParse .>*> pstring "then" .>*>. ( brackets sTermParse .>*>. (pstring "else" >*>. brackets sTermParse)) ) |>> fun (a, (b,c)) -> ITE (a, b, c)
+    let sWhile = pstring "while" >*>. (parenthesise bTermParse .>*>. (pstring "do" >*>. (brackets sTermParse))) |>> While
+    let sVariable = pid .>*>. (pstring ":=" >*>. TermParse) |>> Ass <?> "Assignment"
+    let sDeclare = pstring "declare"  |>> Declare
+    do saref := choice [sWhile; sife; sif; sVariable; sDeclare] <?> "string"
+
+    let stmntParse = sTermParse
 
 (* These five types will move out of this file once you start working on the project *)
     type coord      = int * int
@@ -115,7 +168,7 @@ module ImpParser =
             squares    : Map<int, squareProg>
             usedSquare : int
             center     : coord
-    
+
             isInfinite : bool   // For pretty-printing purposes only
             ppSquare   : string // For pretty-printing purposes only
         }
@@ -123,9 +176,9 @@ module ImpParser =
     type word   = (char * int) list
     type square = Map<int, word -> int -> int -> int>
 
-    let parseSquareFun _ = failwith "not implemented"
+    let parseSquareFun (sqp: squareProg) : square = Map.map (fun _ s w -> fun pos acc -> stmntToSquareFun (run stmntParse s |> getSuccess) w pos acc) sqp
 
-    let parseBoardFun _ = failwith "not implemented"
+    let parseBoardFun (s : string) (m : Map<int, 'a>) = stmntToBoardFun (run stmntParse s |> getSuccess) m
 
     type boardFun = coord -> square option
     type board = {
@@ -134,5 +187,11 @@ module ImpParser =
         squares       : boardFun
     }
 
-    let parseBoardProg (bp : boardProg) = failwith "not implemented"
+    let parseBoardProg (bp : boardProg) : board =
+        let m' : Map<int, square> = Map.map (fun _ v -> parseSquareFun v) bp.squares
 
+        {
+            center = bp.center;
+            defaultSquare = m'.[bp.usedSquare]
+            squares = parseBoardFun bp.prog m'
+        }
